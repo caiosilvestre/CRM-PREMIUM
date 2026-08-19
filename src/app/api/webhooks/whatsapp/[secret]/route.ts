@@ -2,10 +2,11 @@ import { NextResponse } from "next/server";
 import { getWhatsAppProvider } from "@/lib/providers/whatsapp";
 import { findOrCreateLeadByPhone, findOrCreateConversation, insertInboundMessage } from "@/lib/data/webhook-store";
 
-// Z-API "on-message-received" webhook. Configure this URL — including the
-// secret path segment — in the Z-API dashboard: Webhooks > Ao receber.
-// The secret must match ZAPI_WEBHOOK_SECRET in .env.local; there is no
-// documented signature header from Z-API, so the URL itself is the auth.
+// UAZAPI inbound-message webhook. Registered automatically via
+// configureWhatsAppWebhook() (Configurações > Integrações), or manually in
+// the UAZAPI instance settings — including the secret path segment.
+// The secret must match WHATSAPP_WEBHOOK_SECRET in .env.local; there is no
+// documented signature header from UAZAPI, so the URL itself is the auth.
 
 export async function POST(request: Request) {
   const provider = getWhatsAppProvider();

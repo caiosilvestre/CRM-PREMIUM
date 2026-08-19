@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Search, Bot, User as UserIcon, Send, ArrowRightLeft, ExternalLink, Phone, Mail } from "lucide-react";
@@ -16,6 +17,7 @@ import { STAGE_LABEL } from "@/lib/domain/funnel";
 import type { ConversationFull } from "@/lib/data/store";
 import type { ProfileRow } from "@/lib/types/database";
 import { sendHumanMessageAction, takeOverConversationAction, returnToAIAction } from "@/lib/actions/conversations";
+import { createClient } from "@/lib/supabase/client";
 
 export function AtendimentoView({
   conversations: initialConversations,
@@ -35,6 +37,25 @@ export function AtendimentoView({
   const [selectedId, setSelectedId] = useState<string | null>(initialConversations[0]?.id ?? null);
   const [draft, setDraft] = useState("");
   const [pending, startTransition] = useTransition();
+
+  const router = useRouter();
+  useEffect(() => {
+    const supabase = createClient();
+    let debounce: ReturnType<typeof setTimeout> | null = null;
+    const scheduleRefresh = () => {
+      if (debounce) clearTimeout(debounce);
+      debounce = setTimeout(() => router.refresh(), 300);
+    };
+    const channel = supabase
+      .channel("atendimento-realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "messages" }, scheduleRefresh)
+      .on("postgres_changes", { event: "*", schema: "public", table: "conversations" }, scheduleRefresh)
+      .subscribe();
+    return () => {
+      if (debounce) clearTimeout(debounce);
+      supabase.removeChannel(channel);
+    };
+  }, [router]);
 
   const profileById = useMemo(() => new Map(profiles.map((p) => [p.id, p])), [profiles]);
 
