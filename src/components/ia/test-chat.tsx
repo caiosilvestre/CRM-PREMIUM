@@ -31,10 +31,14 @@ export function TestChat() {
     setSending(true);
 
     try {
-      const reply = await sendTestChatMessageAction(nextMessages.map(({ role, content }) => ({ role, content })));
-      setMessages((prev) => [...prev, { id: crypto.randomUUID(), role: "assistant", content: reply }]);
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Falha ao gerar resposta da IA.");
+      const result = await sendTestChatMessageAction(nextMessages.map(({ role, content }) => ({ role, content })));
+      if (result.ok) {
+        setMessages((prev) => [...prev, { id: crypto.randomUUID(), role: "assistant", content: result.reply }]);
+      } else {
+        toast.error(result.error);
+      }
+    } catch {
+      toast.error("Falha ao gerar resposta da IA.");
     } finally {
       setSending(false);
     }

@@ -43,7 +43,7 @@ export function buildSystemPrompt({
 
 export async function generateAiReply(systemPrompt: string, history: ChatTurn[]): Promise<string> {
   const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) throw new Error("OPENAI_API_KEY não configurada no .env.local.");
+  if (!apiKey) throw new Error("OPENAI_API_KEY não configurada nas variáveis de ambiente do servidor.");
 
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
