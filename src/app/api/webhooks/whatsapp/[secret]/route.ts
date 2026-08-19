@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   }
 
-  const lead = await findOrCreateLeadByPhone(inbound.from);
+  const lead = await findOrCreateLeadByPhone(inbound.from, inbound.senderName);
   const conversation = await findOrCreateConversation(lead.id);
   await insertInboundMessage(conversation.id, inbound.text, inbound.receivedAt);
 

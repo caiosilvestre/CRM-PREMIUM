@@ -10,6 +10,7 @@ export interface OutboundWhatsAppMessage {
 
 export interface InboundWhatsAppMessage {
   from: string; // E.164 phone number
+  senderName?: string; // WhatsApp display name (pushName), when the provider sends one
   text: string;
   externalId: string;
   receivedAt: string; // ISO timestamp

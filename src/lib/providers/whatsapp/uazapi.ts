@@ -27,6 +27,10 @@ interface UazApiMessage {
   messageid?: string;
   messageTimestamp?: number;
   sender?: string;
+  senderName?: string;
+  pushName?: string;
+  chatName?: string;
+  sender_name?: string;
 }
 
 function extractMessage(payload: Record<string, unknown>): UazApiMessage | null {
@@ -89,8 +93,15 @@ export class UazApiProvider implements WhatsAppProvider {
     const phone = message.chatid?.split("@")[0] ?? message.sender?.split("@")[0];
     if (!phone || typeof message.messageid !== "string") return null;
 
+    // Field name unconfirmed against a live payload (see uazapi.ts header note) —
+    // check the plausible variants and fall back to no name rather than guess wrong.
+    const senderName = [message.senderName, message.pushName, message.chatName, message.sender_name].find(
+      (value): value is string => typeof value === "string" && value.trim().length > 0,
+    );
+
     return {
       from: phone,
+      senderName,
       text,
       externalId: message.messageid,
       receivedAt:

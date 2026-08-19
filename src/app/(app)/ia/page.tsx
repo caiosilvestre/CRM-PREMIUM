@@ -3,6 +3,7 @@ import { QualificationScriptEditor } from "@/components/ia/qualification-script-
 import { BusinessHoursEditor } from "@/components/ia/business-hours-editor";
 import { FollowupTriggersEditor } from "@/components/ia/followup-triggers-editor";
 import { PricingTableEditor } from "@/components/ia/pricing-table-editor";
+import { TestChat } from "@/components/ia/test-chat";
 import { getSetting, getPricingRules } from "@/lib/data/store";
 import type { QualificationScript, BusinessHours, FollowupTriggers } from "@/lib/domain/settings";
 
@@ -28,6 +29,7 @@ export default async function AgenteIAPage() {
           <TabsTrigger value="horario">Horário de Atendimento</TabsTrigger>
           <TabsTrigger value="gatilhos">Gatilhos de Follow-up</TabsTrigger>
           <TabsTrigger value="precos">Tabela de Preços</TabsTrigger>
+          <TabsTrigger value="teste">Chat de Teste</TabsTrigger>
         </TabsList>
         <TabsContent value="script" className="mt-4">
           <QualificationScriptEditor perguntas={script.perguntas} />
@@ -40,6 +42,9 @@ export default async function AgenteIAPage() {
         </TabsContent>
         <TabsContent value="precos" className="mt-4">
           <PricingTableEditor rules={pricingRules} />
+        </TabsContent>
+        <TabsContent value="teste" className="mt-4">
+          <TestChat />
         </TabsContent>
       </Tabs>
     </div>

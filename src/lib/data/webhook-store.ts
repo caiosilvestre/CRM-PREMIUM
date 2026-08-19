@@ -6,14 +6,14 @@ import type { ConversationRow, LeadRow } from "@/lib/types/database";
 // client and bypasses RLS. Keep this file's surface small and only ever wire
 // it from src/app/api/webhooks/**, never from user-facing actions.
 
-export async function findOrCreateLeadByPhone(phone: string): Promise<LeadRow> {
+export async function findOrCreateLeadByPhone(phone: string, senderName?: string): Promise<LeadRow> {
   const supabase = createServiceRoleClient();
   const { data: existing } = await supabase.from("leads").select("*").eq("contato_telefone", phone).maybeSingle();
   if (existing) return existing as unknown as LeadRow;
 
   const { data, error } = await supabase
     .from("leads")
-    .insert({ nome: phone, contato_telefone: phone, origem: "whatsapp" })
+    .insert({ nome: senderName ?? phone, contato_telefone: phone, origem: "whatsapp" })
     .select()
     .single();
   if (error) throw error;
